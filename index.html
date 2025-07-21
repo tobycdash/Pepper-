@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pepper, You Stink! - Deluxe</title>
+  <style>
+    body { margin: 0; background: #222; color: white; font-family: monospace; overflow: hidden; }
+    canvas { display: block; margin: 0 auto; background: #5a5a5a; }
+    #startBtn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      padding: 20px; font-size: 24px; background: #00aa00; color: white; border: none; border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="450"></canvas>
+  <button id="startBtn">START GAME</button>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById("startBtn");
+
+    let score = 0;
+    let fartX = 600;
+
+    startBtn.addEventListener("click", () => {
+      startBtn.style.display = "none";
+
+      const gameLoop = setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.font = "20px monospace";
+        ctx.fillText("SCORE: " + score, 10, 30);
+
+        // Draw player
+        ctx.fillStyle = "#ff88aa";
+        ctx.fillRect(100, 350, 50, 50); // Woman
+
+        // Draw Pepper
+        ctx.fillStyle = "#553311";
+        ctx.fillRect(500, 350, 50, 50); // Dog
+
+        // Fart cloud
+        ctx.fillStyle = "lime";
+        fartX -= 5;
+        ctx.fillRect(fartX, 360, 30, 30);
+
+        // Collision detection
+        if (fartX < 150 && fartX > 100) {
+          clearInterval(gameLoop);
+          ctx.fillStyle = "red";
+          ctx.font = "40px monospace";
+          ctx.fillText("PEPPER, YOU STINK!!", 150, 200);
+        }
+
+        if (fartX < 0) {
+          fartX = 600;
+          score++;
+        }
+      }, 1000 / 30);
+    });
+  </script>
+</body>
+</html>
