@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pepper, You Stink!</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #222; }
+    canvas { display: block; margin: 0 auto; background: #88ccff; }
+    #startBtn, #restartBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      font-size: 24px;
+      background: #44aa44;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #restartBtn { display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="450"></canvas>
+  <button id="startBtn">Start Game</button>
+  <button id="restartBtn">Play Again</button>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let player = { x: 100, y: 350, w: 50, h: 50 };
+    let pepper = { x: 600, y: 350, w: 50, h: 50 };
+    let fart = { x: pepper.x, y: pepper.y + 10, w: 30, h: 30, vx: -4 };
+    let score = 0;
+    let gameLoop, isGameOver = false;
+
+    function drawRect(obj, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+    }
+
+    function resetGame() {
+      player.x = 100;
+      fart.x = pepper.x;
+      score = 0;
+      isGameOver = false;
+      restartBtn.style.display = "none";
+    }
+
+    function update() {
+      if (isGameOver) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawRect(player, "#ffc0cb"); // Woman
+      drawRect(pepper, "#4b3621"); // Dog
+      drawRect(fart, "lime");      // Fart
+
+      ctx.fillStyle = "black";
+      ctx.font = "20px monospace";
+      ctx.fillText("SCORE: " + score, 20, 30);
+
+      fart.x += fart.vx;
+      if (fart.x + fart.w < 0) {
+        fart.x = pepper.x;
+        score++;
+      }
+
+      if (
+        fart.x < player.x + player.w &&
+        fart.x + fart.w > player.x &&
+        fart.y < player.y + player.h &&
+        fart.y + fart.h > player.y
+      ) {
+        isGameOver = true;
+        clearInterval(gameLoop);
+        ctx.fillStyle = "red";
+        ctx.font = "36px monospace";
+        ctx.fillText("PEPPER, YOU STINK!!", 180, 200);
+        restartBtn.style.display = "block";
+      }
+    }
+
+    startBtn.onclick = () => {
+      startBtn.style.display = "none";
+      resetGame();
+      gameLoop = setInterval(update, 1000 / 30);
+    };
+
+    restartBtn.onclick = () => {
+      resetGame();
+      gameLoop = setInterval(update, 1000 / 30);
+    };
+  </script>
+</body>
+</html>
